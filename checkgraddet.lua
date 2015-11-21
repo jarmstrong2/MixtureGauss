@@ -28,7 +28,7 @@ function feval(x)
 	output = s:forward(input)
     doutput = s:backward(input, torch.ones(1, 20, 20))
 
-	return doutput:sum(), grad_params	
+	return output:sum(), grad_params	
 end
 
 diff, dC, dC_est = optim.checkgrad(feval, params, 1e-2)
