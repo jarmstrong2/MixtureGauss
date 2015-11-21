@@ -11,7 +11,7 @@ cmd:text()
 cmd:text('Script for training model.')
 
 cmd:option('-inputSize' , 30, 'number of input dimension')
-cmd:option('-epsilon' , 1e-5, 'number of input dimension')
+cmd:option('-epsilon' , 1e-2, 'number of input dimension')
 cmd:option('-hiddenSize' , 400, 'number of hidden units in lstms')
 cmd:option('-lr' , 1e-5, 'learning rate')
 cmd:option('-maxlen' , 2, 'max sequence length')
