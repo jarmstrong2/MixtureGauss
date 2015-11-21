@@ -56,7 +56,7 @@ function feval(x)
 
 	output = s:forward(input)
 	print(output)
-	print(a)
+	print(output[1])
 	a,b,c = unpack(output)
 	loss = gauss:forward({a,b,c,target})
 	print("HERE")
