@@ -4,6 +4,8 @@ require 'torch'
 require 'logdeterminant'
 require 'inverse_per_elem'
 
+local mixture = {}
+
 function mixture.gauss(inputSize, uDimSize, nMixture)
 	target = nn.Identity()()
     pi = nn.Identity()()
@@ -39,22 +41,28 @@ function mixture.gauss(inputSize, uDimSize, nMixture)
         nn.MM()({transpose_target_mu_sigma, transpose_target_mu})
         exp_term = nn.MulConstant(-0.5)(transpose_target_mu_sigma_target_mu)
 
-        -- since we're using logsoftmax
-        --log_pi = nn.Log(1)(pi_set)
-        log_pi = pi_set
+        mixture_result = nn.CAddTable()({pi_set, sqr_det_sigma_2_pi, exp_term})
 
-        mixture_result = nn.CAddTable()({log_pi, sqr_det_sigma_2_pi, exp_term})
+        -- Essentially this is the same a addlogsumexp
 
         if i == 1 then
-            add_mixture_result = nn.Exp()(mixture_result)
+            join_mixture_result = mixture_result
         else
-            add_mixture_result = nn.CAddTable()({add_mixture_result, 
-                nn.Exp()(mixture_result)})
+            join_mixture_result = nn.JoinTable(2)({join_mixture_result, 
+                mixture_result})
         end
 
+        max_mixture = nn.Max(2)(join_mixture_result)
+        max_expanded = nn.MulConstant(-1)(nn.Replicate(nMixture, 2, 2)(max_mixture))
+        norm_mixture = nn.CAddTable()({max_expanded, join_mixture_result})
+        norm_mixture_exp = nn.Exp()(norm_mixture)
+        norm_mixture_sumexp = nn.Sum(2)(norm_mixture_exp)
+        norm_mixture_logsumexp = nn.Log()(norm_mixture_sumexp)
+        norm_mixture_addlogsumexp = nn.CAddTable()({max_mixture, norm_mixture_logsumexp})
+        norm_mixture_addlogsumexp = nn.MulConstant(-1)(norm_mixture_addlogsumexp)
     end
 
-    return nn.gModule({pi, mu, u, target}, {add_mixture_result})
+    return nn.gModule({pi, mu, u, target}, {norm_mixture_addlogsumexp})
 end
 
 return mixture
