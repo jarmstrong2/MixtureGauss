@@ -30,10 +30,10 @@ function YHat:updateOutput(input)
     local hat_sigma_t = input[{{},{sigmaStart,sigmaEnd}}]
 
     if opt.isCovarianceFull then
-        local sigma_t = hat_sigma_t
+        sigma_t = hat_sigma_t
     else
         self.sigma_t_act = self.sigma_t_act or nn.Exp():cuda()
-        local sigma_t = self.sigma_t_act:forward(hat_sigma_t)
+        sigma_t = self.sigma_t_act:forward(hat_sigma_t)
     end
 
     self.pi_t_act = self.pi_t_act or nn.LogSoftMax():cuda()
