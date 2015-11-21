@@ -55,8 +55,6 @@ function feval(x)
     	grad_params:zero()
 
 	output = s:forward(input)
-	print(output)
-	print(output[1])
 	a,b,c = unpack(output)
 	loss = gauss:forward({a,b,c,target})
 	print(a)
