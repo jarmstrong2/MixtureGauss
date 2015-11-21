@@ -27,7 +27,7 @@ opt = cmd:parse(arg)
 mix = require 'mixtureGauss'
 gauss = mix.gauss(opt.inputSize, opt.dimSize, opt.numMixture)
 
-y_size = opt.numMixture + 2 * (opt.inputSize * opt.numMixture)
+y_size = opt.numMixture + (opt.inputSize * opt.numMixture) + (opt.inputSize * opt.numMixture * opt.dimSize) 
 
 l = nn.Linear(5, y_size):cuda()
 y = nn.YHat():cuda()
@@ -40,8 +40,8 @@ params, grad_params = s:getParameters()
 
 print(params:size())
 
-mask = torch.ones(2, 1):cuda()
-mixture:setmask(mask)
+--mask = torch.ones(2, 1):cuda()
+--mixture:setmask(mask)
 
 input = torch.CudaTensor(2, 5)
 input:uniform(-0.08, 0.08)
@@ -55,13 +55,16 @@ function feval(x)
     	grad_params:zero()
 
 	output = s:forward(input)
-	loss = gauss:forward(output, target)
+	a,b,c = unpack(output)
+	loss = gauss:forward({a,b,c})
+	print("here")
     --loss = output:sum()
-	mixgrad = gauss:backward(output, target)
-	grad_y = s:backward(input, mixgrad)
+	mixgrad = gauss:backward({a,b,c,target},torch.ones(2,1):cuda())
+	g_a,g_b,g_c,g_t = unpack(mixgrad)
+	grad_y = s:backward(input, {g_a,g_b,g_c,g_t})
 	--grad_y = s:backward(input, output:clone():fill(1):cuda())
 
-	return loss, grad_params:double() 	
+	return loss:sum(), grad_params:double() 	
 end
 
 diff, dC, dC_est = optim.checkgrad(feval, params, opt.epsilon)

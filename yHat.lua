@@ -30,10 +30,10 @@ function YHat:updateOutput(input)
     local hat_sigma_t = input[{{},{sigmaStart,sigmaEnd}}]
 
     if opt.isCovarianceFull then
-        local sigma_t = hat_sigma_t
+        sigma_t = hat_sigma_t
     else
         self.sigma_t_act = self.sigma_t_act or nn.Exp():cuda()
-        local sigma_t = self.sigma_t_act:forward(hat_sigma_t)
+        sigma_t = self.sigma_t_act:forward(hat_sigma_t)
     end
 
     self.pi_t_act = self.pi_t_act or nn.LogSoftMax():cuda()
@@ -64,12 +64,13 @@ function YHat:updateGradInput(input, gradOutput)
 
     local grad_hat_pi_t = self.pi_t_act:backward(hat_pi_t, d_hat_pi_t:clone())
     local grad_hat_mu_t = d_hat_mu_t:clone()
-
-    if opt.isCovarianceFull then
-        local grad_hat_sigma_t = d_hat_sigma_t
+   
+   if opt.isCovarianceFull then
+        grad_hat_sigma_t = d_hat_sigma_t
     else
-        local grad_hat_sigma_t = self.sigma_t_act:backward(hat_sigma_t,d_hat_sigma_t)
+        grad_hat_sigma_t = self.sigma_t_act:backward(hat_sigma_t,d_hat_sigma_t)
     end
+    
    
     local grad_input = torch.cat(grad_hat_pi_t:float(), grad_hat_mu_t:float(), 2)
     grad_input = torch.cat(grad_input, grad_hat_sigma_t:float(), 2)

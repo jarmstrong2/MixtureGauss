@@ -7,7 +7,7 @@ require 'inverse_per_elem'
 local mixture = {}
 
 function mixture.gauss(inputSize, uDimSize, nMixture)
-	target = nn.Identity()()
+    target = nn.Identity()()
     pi = nn.Identity()()
     mu = nn.Identity()()
     u = nn.Identity()()
