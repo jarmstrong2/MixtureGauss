@@ -27,7 +27,7 @@ opt = cmd:parse(arg)
 mix = require 'mixtureGauss'
 gauss = mix.gauss(opt.inputSize, opt.dimSize, opt.numMixture)
 
-y_size = opt.numMixture + 2 * (opt.inputSize * opt.numMixture)
+y_size = opt.numMixture + (opt.inputSize * opt.numMixture) + (opt.inputSize * opt.numMixture * opt.dimSize) 
 
 l = nn.Linear(5, y_size):cuda()
 y = nn.YHat():cuda()
