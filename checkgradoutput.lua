@@ -56,9 +56,9 @@ function feval(x)
 
 	output = s:forward(input)
 	print(output)
-	loss = gauss:forward(output, target)
+	loss = gauss:forward(nn.JoinTable{output,target})
     --loss = output:sum()
-	mixgrad = gauss:backward(output, target)
+	mixgrad = gauss:backward(nn.JoinTable{output,target})
 	grad_y = s:backward(input, mixgrad)
 	--grad_y = s:backward(input, output:clone():fill(1):cuda())
 
