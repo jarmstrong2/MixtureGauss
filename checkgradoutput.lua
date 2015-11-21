@@ -40,8 +40,8 @@ params, grad_params = s:getParameters()
 
 print(params:size())
 
-mask = torch.ones(2, 1):cuda()
-mixture:setmask(mask)
+--mask = torch.ones(2, 1):cuda()
+--mixture:setmask(mask)
 
 input = torch.CudaTensor(2, 5)
 input:uniform(-0.08, 0.08)
