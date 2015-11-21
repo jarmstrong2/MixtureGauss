@@ -8,7 +8,7 @@ det_size = 20^2
 l = nn.Linear(5, det_size)
 det = nn.LogDeterminant()
 
-s = nn.Sequential():cuda()
+s = nn.Sequential()
 s:add(l)
 s:add(det)
 
