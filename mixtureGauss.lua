@@ -56,7 +56,7 @@ function mixture.gauss(inputSize, uDimSize, nMixture)
 
     end
 
-    return nn.gModule({pi, mu, u, target}, {add_mixture_result}):cuda()
+    return nn.gModule({pi, mu, u, target}, {add_mixture_result})
 end
 
 return mixture
