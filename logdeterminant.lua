@@ -9,7 +9,7 @@ function LogDeterminant:updateOutput(input)
         inputSize = ((input[i]):size())[1]
         eps = torch.eye(inputSize) * 1e-2
         eig_vals = torch.eig(input[i] + eps, 'N')
-        self.output[i] = torch.log(eig_vals:select(2, 1):sum())
+        self.output[i] = (torch.log(eig_vals:select(2, 1))):sum()
     end
     return self.output
 end

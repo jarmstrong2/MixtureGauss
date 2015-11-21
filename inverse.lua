@@ -21,8 +21,8 @@ function Inverse:updateGradInput(input, gradOutput)
     for i = 1, batchSize do
         inputSize = ((input[i]):size())[1]
         eps = torch.eye(inputSize) * 1e-2  
-        self.gradInput[i] = (torch.inverse(input[i] + eps) * 
-            gradOutput[i]) * torch.inverse(input[i] + eps)
+        self.gradInput[i] = torch.inverse(input[i] + eps) * 
+            torch.inverse(input[i] + eps)
     end
     return self.gradInput
 end

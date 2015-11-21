@@ -1,4 +1,4 @@
-require 'logdeterminant'
+require 'inverse_per_elem'
 require 'optim'
 require 'torch'
 require 'nn'
@@ -12,9 +12,9 @@ input = nn.Identity()()
 l = nn.Linear(5, det_size)(input)
 l_reshape = nn.Reshape(1,20)(l)
 m = nn.MM()({nn.Transpose({2,3})(l_reshape), l_reshape})
-det = nn.LogDeterminant()(m)
+inv = nn.Inverse()(m)
 
-nng = nn.gModule({input}, {det})
+nng = nn.gModule({input}, {inv})
 
 params, grad_params = nng:getParameters()
 
@@ -28,7 +28,7 @@ function feval(x)
     	grad_params:zero()
 
 	output = nng:forward(input)
-    doutput = nng:backward(input, torch.ones(2, 1))
+    doutput = nng:backward(input, torch.ones(2, 20, 20))
 
 	return output:sum(), grad_params	
 end
