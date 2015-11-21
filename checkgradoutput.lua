@@ -25,7 +25,6 @@ cmd:text()
 opt = cmd:parse(arg)
 
 mix = require 'mixtureGauss'
-mix:cuda()
 gauss = mix.gauss(opt.inputSize, opt.dimSize, opt.numMixture)
 
 y_size = opt.numMixture + 2 * (opt.inputSize * opt.numMixture)
