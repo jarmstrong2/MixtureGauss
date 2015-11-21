@@ -26,7 +26,8 @@ function Inverse:updateGradInput(input, gradOutput)
         input_t_inv = torch.inverse((input[i] + eps):t())
         kron_prod = -kron(input_t_inv, input_inv)
         kron_sum = torch.sum(kron_prod,2):resize(dim,dim)
-        self.gradInput[i] = kron_sum 
+        self.gradInput[i] = kron_sum
+        self.gradInput[i]:cmul(gradOutput[i])
     end
     return self.gradInput
 end
