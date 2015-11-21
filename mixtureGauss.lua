@@ -4,6 +4,8 @@ require 'torch'
 require 'logdeterminant'
 require 'inverse_per_elem'
 
+local mixture = {}
+
 function mixture.gauss(inputSize, uDimSize, nMixture)
 	target = nn.Identity()()
     pi = nn.Identity()()
