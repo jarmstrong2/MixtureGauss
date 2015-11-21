@@ -19,6 +19,7 @@ function Inverse:updateGradInput(input, gradOutput)
     batchSize = input:size()[1]
     dim = input:size()[2]
     self.gradInput =  torch.zeros(batchSize, dim, dim)
+    print(gradOutput)
     for i = 1, batchSize do
         inputSize = dim
         eps = torch.eye(inputSize) * 1e-2  
@@ -27,7 +28,7 @@ function Inverse:updateGradInput(input, gradOutput)
         kron_prod = -kron(input_t_inv, input_inv)
         kron_sum = torch.sum(kron_prod,2):resize(dim,dim)
         self.gradInput[i] = kron_sum
-        self.gradInput[i]:cmul(gradOutput[i])
     end
+    self.gradInput:cmul(gradOutput)
     return self.gradInput
 end

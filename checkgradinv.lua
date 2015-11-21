@@ -1,4 +1,4 @@
-require 'inverse_per_elem'
+require 'inverse2'
 require 'optim'
 require 'torch'
 require 'nn'
@@ -13,8 +13,10 @@ l = nn.Linear(5, det_size)(input)
 l_reshape = nn.Reshape(1,20)(l)
 m = nn.MM()({nn.Transpose({2,3})(l_reshape), l_reshape})
 inv = nn.Inverse()(m)
+inv_reshape = nn.Reshape(20*20)(inv)
+l2 = nn.Linear(20*20, 5)(inv_reshape)
 
-nng = nn.gModule({input}, {inv})
+nng = nn.gModule({input}, {l2})
 
 params, grad_params = nng:getParameters()
 
@@ -28,12 +30,12 @@ function feval(x)
     	grad_params:zero()
 
 	output = nng:forward(input)
-    doutput = nng:backward(input, torch.ones(2, 20, 20))
+    doutput = nng:backward(input, torch.ones(2,5))
 
 	return output:sum(), grad_params	
 end
 
-diff, dC, dC_est = optim.checkgrad(feval, params, 1e-5)
+diff, dC, dC_est = optim.checkgrad(feval, params, 1e-8)
 
 print(output)
 print(diff)

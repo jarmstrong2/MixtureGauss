@@ -13,8 +13,9 @@ l = nn.Linear(5, det_size)(input)
 l_reshape = nn.Reshape(1,20)(l)
 m = nn.MM()({nn.Transpose({2,3})(l_reshape), l_reshape})
 det = nn.LogDeterminant()(m)
+l2 = nn.Linear(1, 50)(det)
 
-nng = nn.gModule({input}, {det})
+nng = nn.gModule({input}, {l2})
 
 params, grad_params = nng:getParameters()
 
@@ -28,7 +29,7 @@ function feval(x)
     	grad_params:zero()
 
 	output = nng:forward(input)
-    doutput = nng:backward(input, torch.ones(2, 1))
+    doutput = nng:backward(input, torch.ones(2, 50))
 
 	return output:sum(), grad_params	
 end
