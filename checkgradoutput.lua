@@ -56,7 +56,7 @@ function feval(x)
 
 	output = s:forward(input)
 	a,b,c = unpack(output)
-	loss = gauss:forward({a:double(),b:double(),c:double()})
+	loss = gauss:forward({a:double(),b:double(),c:double(),target:double()})
 	print("here")
     --loss = output:sum()
 	mixgrad = gauss:backward({a:double(),b:double(),c:double(),target:double()},torch.ones(2,1):double())
