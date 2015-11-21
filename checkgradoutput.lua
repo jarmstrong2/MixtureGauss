@@ -56,10 +56,10 @@ function feval(x)
 
 	output = s:forward(input)
 	a,b,c = unpack(output)
-	loss = gauss:forward({a,b,c,target})
+	loss = gauss:forward({a:float(),b:float(),c:float(),target:float()})
 	print(a)
     --loss = output:sum()
-	mixgrad = gauss:backward({a,b,c,target},torch.ones(2,1))
+	mixgrad = gauss:backward({a:float(),b:float(),c:float(),target:float()},torch.ones(2,1):float())
 	grad_y = s:backward(input, mixgrad)
 	--grad_y = s:backward(input, output:clone():fill(1):cuda())
 
