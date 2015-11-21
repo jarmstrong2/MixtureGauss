@@ -63,7 +63,7 @@ function feval(x)
 	grad_y = s:backward(input, {g_a:cuda(),g_b:cuda(),g_c:cuda(),g_t:cuda()})
 	--grad_y = s:backward(input, output:clone():fill(1):cuda())
 
-	return loss, grad_params:double() 	
+	return loss:sum(), grad_params:double() 	
 end
 
 diff, dC, dC_est = optim.checkgrad(feval, params, opt.epsilon)
