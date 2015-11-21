@@ -55,6 +55,7 @@ function feval(x)
     	grad_params:zero()
 
 	output = s:forward(input)
+	print(output)
 	loss = gauss:forward(output, target)
     --loss = output:sum()
 	mixgrad = gauss:backward(output, target)
