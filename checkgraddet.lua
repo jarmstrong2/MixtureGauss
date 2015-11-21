@@ -6,10 +6,12 @@ require 'nn'
 det_size = 20^2 
 
 l = nn.Linear(5, det_size)
+reshape = nn.Reshape(1,20,20)
 det = nn.LogDeterminant()
 
 s = nn.Sequential()
 s:add(l)
+s:add(reshape)
 s:add(det)
 
 params, grad_params = s:getParameters()
