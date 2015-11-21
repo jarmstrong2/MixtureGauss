@@ -57,14 +57,15 @@ function feval(x)
 	output = s:forward(input)
 	a,b,c = unpack(output)
 	loss = gauss:forward({a:double(),b:double(),c:double(),target:double()})
-	print("here")
-    --loss = output:sum()
+	--print("here")
+        loss = output:sum()
+        print(loss)
 	mixgrad = gauss:backward({a:double(),b:double(),c:double(),target:double()},torch.ones(2,1):double())
 	g_a,g_b,g_c,g_t = unpack(mixgrad)
 	grad_y = s:backward(input, {g_a:cuda(),g_b:cuda(),g_c:cuda(),g_t:cuda()})
 	--grad_y = s:backward(input, output:clone():fill(1):cuda())
 
-	return loss:sum(), grad_params:double() 	
+	return loss, grad_params:double() 	
 end
 
 diff, dC, dC_est = optim.checkgrad(feval, params, opt.epsilon)
