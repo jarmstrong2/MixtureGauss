@@ -47,6 +47,9 @@ input = torch.CudaTensor(2, 5)
 input:uniform(-0.08, 0.08)
 
 target = torch.randn(2, opt.inputSize):cuda()
+eps = torch.eye(opt.inputSize,opt.inputSize)
+eps:resize(1,opt.inputSize,opt.inputSize)
+eps_cat = torch.cat(eps,eps,1):cuda()
 
 function feval(x)
 	if x ~= params then
@@ -56,7 +59,7 @@ function feval(x)
 
 	output = s:forward(input)
 	a,b,c = unpack(output)
-	loss = gauss:forward({a,b,c,target})
+	loss = gauss:forward({a,b,c,target,eps_cat})
 	--print("here")
         loss = loss:sum()
         --print(loss)
