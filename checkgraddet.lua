@@ -31,7 +31,7 @@ function feval(x)
 	output = nng:forward(input:cuda())
     doutput = nng:backward(input:cuda(), torch.ones(2, 50):cuda())
 
-	return output:sum(), grad_params	
+	return output:sum(), grad_params:double()	
 end
 
 diff, dC, dC_est = optim.checkgrad(feval, params:double(), 1e-5)
