@@ -11,6 +11,8 @@ function mixture.gauss(inputSize, uDimSize, nMixture)
     pi = nn.Identity()()
     mu = nn.Identity()()
     u = nn.Identity()()
+    mask = nn.Identity()()
+    eps = nn.Identity()()
 
     u_reshaped = nn.Reshape(nMixture, uDimSize, inputSize)(u)
     u_pack = nn.SplitTable(2,4)(u_reshaped)
@@ -25,7 +27,7 @@ function mixture.gauss(inputSize, uDimSize, nMixture)
         mu_set = nn.SelectTable(i)(mu_pack)
         pi_set = nn.SelectTable(i)(pi_pack)
 
-        sigma = nn.MM()({nn.Transpose({2,3})(u_set), u_set})
+        sigma = nn.CAddTable()({nn.MM()({nn.Transpose({2,3})(u_set), u_set}), eps})
 
         det_sigma_2_pi = nn.Add(inputSize, inputSize * torch.log(2 * math.pi))
         (nn.LogDeterminant()(sigma))
@@ -60,9 +62,10 @@ function mixture.gauss(inputSize, uDimSize, nMixture)
         norm_mixture_logsumexp = nn.Log()(norm_mixture_sumexp)
         norm_mixture_addlogsumexp = nn.CAddTable()({max_mixture, norm_mixture_logsumexp})
         norm_mixture_addlogsumexp = nn.MulConstant(-1)(norm_mixture_addlogsumexp)
+        result = nn.CMulTable()({mask, norm_mixture_addlogsumexp})
     end
 
-    return nn.gModule({pi, mu, u, target}, {norm_mixture_addlogsumexp})
+    return nn.gModule({pi, mu, u, mask, target, eps}, {result})
 end
 
 return mixture
