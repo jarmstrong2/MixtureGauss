@@ -19,8 +19,8 @@ function LogDeterminant:updateGradInput(input, gradOutput)
     self.gradInput =  torch.zeros(input:size()):cuda()
     for i = 1, batchSize do  
         inputSize = ((input[i]):size())[1]
-        eps = torch.eye(inputSize):cuda() * 1e-2
-        invInput = torch.inverse(input[i] + eps)
+        eps = torch.eye(inputSize):float() * 1e-2
+        invInput = (torch.inverse(input:float()[i] + eps)):cuda()
         self.gradInput[i] = invInput:t() * gradOutput[i]:squeeze()
     end
     return self.gradInput
