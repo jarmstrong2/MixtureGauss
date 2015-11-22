@@ -3,6 +3,7 @@ require 'optim'
 require 'torch'
 require 'nn'
 require 'nngraph'
+require 'cunn'
 
 det_size = 20 
 
