@@ -2,7 +2,7 @@ require 'nn'
 require 'nngraph'
 require 'torch'
 require 'logdeterminant'
-require 'inverse_per_elem'
+require 'inverse2'
 
 local mixture = {}
 
