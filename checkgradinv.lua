@@ -14,7 +14,7 @@ l_reshape = nn.Reshape(1,20)(l)
 m = nn.MM()({nn.Transpose({2,3})(l_reshape), l_reshape})
 inv = nn.Inverse()(m)
 inv_reshape = nn.Reshape(20*20)(inv)
-l2 = nn.Linear(20*20, 5)(inv_reshape)
+l2 = nn.Linear(20*20, 10)(inv_reshape)
 
 nng = nn.gModule({input}, {l2})
 
@@ -30,12 +30,12 @@ function feval(x)
     	grad_params:zero()
 
 	output = nng:forward(input)
-    doutput = nng:backward(input, torch.ones(2,5))
+    doutput = nng:backward(input, torch.ones(2,10))
 
 	return output:sum(), grad_params	
 end
 
-diff, dC, dC_est = optim.checkgrad(feval, params, 1e-8)
+diff, dC, dC_est = optim.checkgrad(feval, params, 1e-2)
 
 print(output)
 print(diff)
