@@ -60,7 +60,7 @@ function feval(x)
 
 	output = s:forward(input)
 	a,b,c = unpack(output)
-	loss = gauss:forward({a,b,c,target,eps_cat})
+	loss = gauss:forward({a,b,c,mask,target,eps_cat})
 	--print("here")
         loss = loss:sum()
         --print(loss)
