@@ -25,7 +25,7 @@ cmd:text()
 opt = cmd:parse(arg)
 
 mix = require 'mixtureGauss'
-gauss = mix.gauss(opt.inputSize, opt.dimSize, opt.numMixture)
+gauss = mix.gauss(opt.inputSize, opt.dimSize, opt.numMixture):cuda()
 
 y_size = opt.numMixture + (opt.inputSize * opt.numMixture) + (opt.inputSize * opt.numMixture * opt.dimSize) 
 
@@ -56,11 +56,11 @@ function feval(x)
 
 	output = s:forward(input)
 	a,b,c = unpack(output)
-	loss = gauss:forward({a:double(),b:double(),c:double(),target:double()})
+	loss = gauss:forward({a,b,c,target})
 	--print("here")
         loss = loss:sum()
         --print(loss)
-	mixgrad = gauss:backward({a:double(),b:double(),c:double(),target:double()},torch.ones(2,1):double())
+	mixgrad = gauss:backward({a,b,c,target},torch.ones(2,1):cuda())
 	g_a,g_b,g_c,g_t = unpack(mixgrad)
 	grad_y = s:backward(input, {g_a:cuda(),g_b:cuda(),g_c:cuda(),g_t:cuda()})
 	--grad_y = s:backward(input, output:clone():fill(1):cuda())
