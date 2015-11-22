@@ -10,6 +10,7 @@ function LogDeterminant:updateOutput(input)
         eps = torch.eye(inputSize):cuda() * 1e-2
         eig_vals = (torch.eig(input:float()[i] + eps, 'N'))cuda()
         self.output[i] = (torch.log(eig_vals:select(2, 1))):sum()
+        print('here')
     end
     return self.output
 end
