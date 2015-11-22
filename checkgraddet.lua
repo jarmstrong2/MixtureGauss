@@ -3,7 +3,7 @@ require 'optim'
 require 'torch'
 require 'nn'
 require 'nngraph'
-
+require 'cunn'
 det_size = 20 
 
 
@@ -15,7 +15,7 @@ m = nn.MM()({nn.Transpose({2,3})(l_reshape), l_reshape})
 det = nn.LogDeterminant()(m)
 l2 = nn.Linear(1, 50)(det)
 
-nng = nn.gModule({input}, {l2})
+nng = nn.gModule({input}, {l2}):cuda()
 
 params, grad_params = nng:getParameters()
 
@@ -28,8 +28,8 @@ function feval(x)
     	end
     	grad_params:zero()
 
-	output = nng:forward(input)
-    doutput = nng:backward(input, torch.ones(2, 50))
+	output = nng:forward(input:cuda())
+    doutput = nng:backward(input:cuda(), torch.ones(2, 50):cuda())
 
 	return output:sum(), grad_params	
 end
