@@ -34,7 +34,7 @@ function feval(x)
 	return output:sum(), grad_params	
 end
 
-diff, dC, dC_est = optim.checkgrad(feval, params, 1e-5)
+diff, dC, dC_est = optim.checkgrad(feval, params:double(), 1e-5)
 
 print(output)
 print(diff)
